@@ -1,8 +1,10 @@
-const GISCUS_CONFIG = {
-  repo: "TYoungK/invitation",
-  repoId: "R_kgDOSkiLdA",
-  category: "Announcements",
-  categoryId: "DIC_kwDOSkiLdM4C9lTs",
+const FIREBASE_CONFIG = {
+  apiKey: "",
+  authDomain: "",
+  projectId: "",
+  storageBucket: "",
+  messagingSenderId: "",
+  appId: "",
 };
 
 const galleryButtons = document.querySelectorAll("[data-photo]");
@@ -34,58 +36,89 @@ document.addEventListener("keydown", (event) => {
 });
 
 const commentsRoot = document.querySelector("#comments");
-const giscusReady = Object.values(GISCUS_CONFIG).every(Boolean);
+const firebaseReady = FIREBASE_CONFIG.apiKey && FIREBASE_CONFIG.projectId && FIREBASE_CONFIG.appId;
 
-if (giscusReady) {
-  const script = document.createElement("script");
-  script.src = "https://giscus.app/client.js";
-  script.async = true;
-  script.crossOrigin = "anonymous";
-  script.setAttribute("data-repo", GISCUS_CONFIG.repo);
-  script.setAttribute("data-repo-id", GISCUS_CONFIG.repoId);
-  script.setAttribute("data-category", GISCUS_CONFIG.category);
-  script.setAttribute("data-category-id", GISCUS_CONFIG.categoryId);
-  script.setAttribute("data-mapping", "pathname");
-  script.setAttribute("data-strict", "0");
-  script.setAttribute("data-reactions-enabled", "1");
-  script.setAttribute("data-emit-metadata", "0");
-  script.setAttribute("data-input-position", "top");
-  script.setAttribute("data-theme", "light");
-  script.setAttribute("data-lang", "ko");
-  commentsRoot.append(script);
+if (firebaseReady) {
+  renderFirebaseGuestbook();
 } else {
   renderLocalGuestbook();
 }
 
+async function renderFirebaseGuestbook() {
+  commentsRoot.innerHTML = guestbookMarkup("축하 메시지는 모든 방문자에게 함께 표시됩니다.");
+
+  const form = commentsRoot.querySelector("form");
+  const list = commentsRoot.querySelector(".messages");
+  const submit = form.querySelector("button");
+
+  try {
+    const [{ initializeApp }, firestore] = await Promise.all([
+      import("https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js"),
+      import("https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js"),
+    ]);
+    const {
+      addDoc,
+      collection,
+      getFirestore,
+      limit,
+      onSnapshot,
+      orderBy,
+      query,
+      serverTimestamp,
+    } = firestore;
+
+    const app = initializeApp(FIREBASE_CONFIG);
+    const db = getFirestore(app);
+    const messagesRef = collection(db, "guestbookMessages");
+    const messagesQuery = query(messagesRef, orderBy("createdAt", "desc"), limit(50));
+
+    onSnapshot(
+      messagesQuery,
+      (snapshot) => {
+        drawMessages(list, snapshot.docs.map((doc) => doc.data()));
+      },
+      () => {
+        list.innerHTML = `<p class="guestbook__error">메시지를 불러오지 못했습니다. Firebase 설정과 보안 규칙을 확인해 주세요.</p>`;
+      },
+    );
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const formData = new FormData(form);
+      const name = String(formData.get("name")).trim();
+      const message = String(formData.get("message")).trim();
+
+      if (!name || !message) return;
+
+      submit.disabled = true;
+      submit.textContent = "등록 중";
+
+      try {
+        await addDoc(messagesRef, {
+          name,
+          message,
+          createdAt: serverTimestamp(),
+        });
+        form.reset();
+      } finally {
+        submit.disabled = false;
+        submit.textContent = "축하 메시지 남기기";
+      }
+    });
+  } catch (error) {
+    list.innerHTML = `<p class="guestbook__error">Firebase 연결에 실패했습니다. 설정값을 확인해 주세요.</p>`;
+  }
+}
+
 function renderLocalGuestbook() {
-  commentsRoot.innerHTML = `
-    <form class="local-comment">
-      <p>GitHub Discussions 설정 전에는 이 브라우저에만 저장되는 미리보기 방명록으로 동작합니다.</p>
-      <label for="guest-name">이름</label>
-      <input id="guest-name" name="name" maxlength="24" autocomplete="name" required />
-      <label for="guest-message">메시지</label>
-      <textarea id="guest-message" name="message" maxlength="300" required></textarea>
-      <button type="submit">축하 메시지 남기기</button>
-      <div class="messages" aria-live="polite"></div>
-    </form>
-  `;
+  commentsRoot.innerHTML = guestbookMarkup("Firebase 설정 전에는 이 브라우저에만 저장되는 미리보기 방명록으로 동작합니다.");
 
   const form = commentsRoot.querySelector("form");
   const list = commentsRoot.querySelector(".messages");
   const storageKey = "wedding-local-messages";
   const messages = JSON.parse(localStorage.getItem(storageKey) || "[]");
 
-  const draw = () => {
-    list.innerHTML = messages
-      .map((item) => `
-        <article class="message">
-          <strong>${escapeHtml(item.name)}</strong>
-          <span>${escapeHtml(item.date)}</span>
-          <p>${escapeHtml(item.message)}</p>
-        </article>
-      `)
-      .join("");
-  };
+  const draw = () => drawMessages(list, messages);
 
   form.addEventListener("submit", (event) => {
     event.preventDefault();
@@ -103,8 +136,46 @@ function renderLocalGuestbook() {
   draw();
 }
 
+function guestbookMarkup(helpText) {
+  return `
+    <form class="local-comment">
+      <p>${helpText}</p>
+      <label for="guest-name">이름</label>
+      <input id="guest-name" name="name" maxlength="24" autocomplete="name" required />
+      <label for="guest-message">메시지</label>
+      <textarea id="guest-message" name="message" maxlength="300" required></textarea>
+      <button type="submit">축하 메시지 남기기</button>
+      <div class="messages" aria-live="polite"></div>
+    </form>
+  `;
+}
+
+function drawMessages(list, messages) {
+  if (!messages.length) {
+    list.innerHTML = `<p class="guestbook__empty">첫 축하 메시지를 남겨 주세요.</p>`;
+    return;
+  }
+
+  list.innerHTML = messages
+    .map((item) => `
+      <article class="message">
+        <strong>${escapeHtml(item.name || "익명")}</strong>
+        <span>${formatDate(item.createdAt || item.date)}</span>
+        <p>${escapeHtml(item.message || "")}</p>
+      </article>
+    `)
+    .join("");
+}
+
+function formatDate(value) {
+  if (typeof value === "string") return escapeHtml(value);
+
+  const date = value?.toDate?.() || new Date();
+  return new Intl.DateTimeFormat("ko-KR", { dateStyle: "medium" }).format(date);
+}
+
 function escapeHtml(value) {
-  return value.replace(/[&<>"']/g, (char) => ({
+  return String(value).replace(/[&<>"']/g, (char) => ({
     "&": "&amp;",
     "<": "&lt;",
     ">": "&gt;",

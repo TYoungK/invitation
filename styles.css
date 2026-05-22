@@ -364,6 +364,11 @@ details p {
   margin-top: 14px;
 }
 
+.local-comment button:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
 .messages {
   display: grid;
   gap: 10px;
@@ -389,6 +394,21 @@ details p {
 .message p {
   margin: 8px 0 0;
   text-align: left;
+}
+
+.guestbook__empty,
+.guestbook__error {
+  margin: 0;
+  padding: 18px;
+  color: var(--muted);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fbfaf7;
+  text-align: center;
+}
+
+.guestbook__error {
+  color: #9b4b43;
 }
 
 .lightbox {
