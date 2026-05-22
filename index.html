@@ -7,7 +7,7 @@
     <meta name="description" content="지후와 서연의 모바일 청첩장" />
     <title>지후 그리고 서연, 결혼합니다</title>
     <link rel="preload" href="assets/wedding-hero.png" as="image" />
-    <link rel="stylesheet" href="styles.css?v=20260522-2" />
+    <link rel="stylesheet" href="styles.css?v=20260522-3" />
   </head>
   <body>
     <header class="hero" id="top">
@@ -111,10 +111,22 @@
     </main>
 
     <div class="lightbox" hidden>
-      <button class="lightbox__close" type="button" aria-label="사진 닫기">×</button>
-      <button class="lightbox__nav lightbox__prev" type="button" aria-label="이전 사진">‹</button>
+      <button class="lightbox__close" type="button" aria-label="사진 닫기">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M6 6l12 12M18 6L6 18" />
+        </svg>
+      </button>
+      <button class="lightbox__nav lightbox__prev" type="button" aria-label="이전 사진">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M15 6l-6 6 6 6" />
+        </svg>
+      </button>
       <img alt="" />
-      <button class="lightbox__nav lightbox__next" type="button" aria-label="다음 사진">›</button>
+      <button class="lightbox__nav lightbox__next" type="button" aria-label="다음 사진">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M9 6l6 6-6 6" />
+        </svg>
+      </button>
       <p class="lightbox__counter" aria-live="polite"></p>
     </div>
 
@@ -123,6 +135,6 @@
       <button type="button" data-scroll-target="top">맨 위로</button>
     </footer>
 
-    <script src="script.js?v=20260522-2"></script>
+    <script src="script.js?v=20260522-3"></script>
   </body>
 </html>
