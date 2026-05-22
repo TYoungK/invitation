@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f8f4ef" />
+    <meta name="description" content="지후와 서연의 모바일 청첩장" />
+    <title>지후 그리고 서연, 결혼합니다</title>
+    <link rel="preload" href="assets/wedding-hero.png" as="image" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="hero" id="top">
+      <img class="hero__image" src="assets/wedding-hero.png" alt="신랑 신부 웨딩 사진" />
+      <div class="hero__shade" aria-hidden="true"></div>
+      <div class="hero__content">
+        <p class="eyebrow">Wedding Invitation</p>
+        <h1>지후 &amp; 서연</h1>
+        <p class="hero__date">2026. 10. 24. Sat 12:30 PM</p>
+        <p class="hero__place">라움 아트센터 2F 마제스틱 볼룸</p>
+      </div>
+    </header>
+
+    <nav class="quick-nav" aria-label="청첩장 바로가기">
+      <a href="#message">초대</a>
+      <a href="#info">일정</a>
+      <a href="#gallery">사진</a>
+      <a href="#guestbook">축하</a>
+    </nav>
+
+    <main>
+      <section class="section intro" id="message">
+        <p class="section__kicker">Invitation</p>
+        <h2>서로의 계절이 되어<br />한 길을 걸어가려 합니다.</h2>
+        <p>
+          같은 곳을 바라보며 웃을 수 있는 사람을 만나,
+          이제 가족이라는 이름으로 새 출발을 하려 합니다.
+          소중한 걸음으로 함께해 주시면 더없이 큰 기쁨이겠습니다.
+        </p>
+      </section>
+
+      <section class="section families" aria-label="혼주 및 신랑 신부">
+        <div>
+          <span>신랑</span>
+          <strong>김지후</strong>
+          <p>김민준 · 이정아의 장남</p>
+        </div>
+        <div>
+          <span>신부</span>
+          <strong>한서연</strong>
+          <p>한도윤 · 박유진의 장녀</p>
+        </div>
+      </section>
+
+      <section class="section info" id="info">
+        <p class="section__kicker">Wedding Day</p>
+        <h2>2026년 10월 24일 토요일<br />오후 12시 30분</h2>
+        <div class="calendar" aria-label="2026년 10월 달력">
+          <div>일</div><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div>토</div>
+          <span></span><span></span><span></span><span></span><span>1</span><span>2</span><span>3</span>
+          <span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span>
+          <span>11</span><span>12</span><span>13</span><span>14</span><span>15</span><span>16</span><span>17</span>
+          <span>18</span><span>19</span><span>20</span><span>21</span><span>22</span><span>23</span><strong>24</strong>
+          <span>25</span><span>26</span><span>27</span><span>28</span><span>29</span><span>30</span><span>31</span>
+        </div>
+      </section>
+
+      <section class="section location" id="location">
+        <p class="section__kicker">Location</p>
+        <h2>라움 아트센터</h2>
+        <p>서울 강남구 언주로 564 · 2층 마제스틱 볼룸</p>
+        <div class="map" role="img" aria-label="예식장 약도">
+          <div class="map__road road-a"></div>
+          <div class="map__road road-b"></div>
+          <div class="map__pin">Wedding Hall</div>
+        </div>
+        <div class="actions">
+          <a href="https://map.kakao.com/link/search/라움%20아트센터" target="_blank" rel="noreferrer">카카오맵</a>
+          <a href="https://map.naver.com/p/search/라움%20아트센터" target="_blank" rel="noreferrer">네이버지도</a>
+        </div>
+      </section>
+
+      <section class="section account">
+        <p class="section__kicker">Heart</p>
+        <h2>마음 전하실 곳</h2>
+        <details>
+          <summary>신랑측 계좌 보기</summary>
+          <p>국민은행 123456-78-901234 김지후</p>
+        </details>
+        <details>
+          <summary>신부측 계좌 보기</summary>
+          <p>신한은행 110-123-456789 한서연</p>
+        </details>
+      </section>
+
+      <section class="section gallery" id="gallery">
+        <p class="section__kicker">Gallery</p>
+        <h2>함께 남긴 장면들</h2>
+        <div class="gallery__grid">
+          <button type="button" data-photo="assets/wedding-hero.png"><img src="assets/wedding-hero.png" alt="스튜디오 웨딩 사진" /></button>
+          <button type="button" data-photo="assets/wedding-gallery-1.png"><img src="assets/wedding-gallery-1.png" alt="정원 웨딩 사진" /></button>
+          <button type="button" data-photo="assets/wedding-gallery-2.png"><img src="assets/wedding-gallery-2.png" alt="부케와 손 클로즈업 사진" /></button>
+        </div>
+      </section>
+
+      <section class="section guestbook" id="guestbook">
+        <p class="section__kicker">Guestbook</p>
+        <h2>축하 메시지</h2>
+        <div id="comments"></div>
+      </section>
+    </main>
+
+    <div class="lightbox" hidden>
+      <button type="button" aria-label="사진 닫기">×</button>
+      <img alt="" />
+    </div>
+
+    <footer>
+      <p>지후와 서연의 새로운 시작에 함께해 주세요.</p>
+      <a href="#top">맨 위로</a>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>
