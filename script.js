@@ -21,23 +21,36 @@ const galleryPhotos = [...galleryButtons].map((button) => ({
 }));
 let currentPhotoIndex = 0;
 let touchStartX = 0;
+const cleanUrl = window.location.pathname + window.location.search;
 
-document.querySelectorAll('a[href^="#"]').forEach((link) => {
-  link.addEventListener("click", (event) => {
-    const targetId = link.getAttribute("href");
-    const target = targetId === "#top" ? document.body : document.querySelector(targetId);
+if ("scrollRestoration" in history) {
+  history.scrollRestoration = "manual";
+}
+
+history.replaceState({ invitationTop: true }, "", cleanUrl);
+
+window.addEventListener("popstate", () => {
+  window.scrollTo({ top: 0, behavior: "auto" });
+});
+
+document.querySelectorAll("[data-scroll-target]").forEach((control) => {
+  control.addEventListener("click", () => {
+    const targetId = control.dataset.scrollTarget;
+    const target = targetId === "top" ? document.body : document.getElementById(targetId);
 
     if (!target) return;
 
-    event.preventDefault();
-
-    if (targetId === "#top") {
+    if (targetId === "top") {
       window.scrollTo({ top: 0, behavior: "smooth" });
+      history.replaceState({ invitationTop: true }, "", cleanUrl);
     } else {
+      if (history.state?.invitationNav) {
+        history.replaceState({ invitationNav: true }, "", cleanUrl);
+      } else {
+        history.pushState({ invitationNav: true }, "", cleanUrl);
+      }
       target.scrollIntoView({ behavior: "smooth", block: "start" });
     }
-
-    history.replaceState(null, "", window.location.pathname + window.location.search);
   });
 });
 
@@ -55,6 +68,7 @@ const showPhoto = (index) => {
   lightboxImage.alt = photo.alt;
   lightboxCounter.textContent = `${currentPhotoIndex + 1} / ${galleryPhotos.length}`;
   lightbox.hidden = false;
+  document.body.classList.add("lightbox-open");
 };
 
 const showNextPhoto = () => showPhoto(currentPhotoIndex + 1);
@@ -63,6 +77,7 @@ const showPrevPhoto = () => showPhoto(currentPhotoIndex - 1);
 const hideLightbox = () => {
   lightbox.hidden = true;
   lightboxImage.removeAttribute("src");
+  document.body.classList.remove("lightbox-open");
 };
 
 closeLightbox.addEventListener("click", hideLightbox);
