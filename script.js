@@ -1,10 +1,11 @@
 const FIREBASE_CONFIG = {
-  apiKey: "",
-  authDomain: "",
-  projectId: "",
-  storageBucket: "",
-  messagingSenderId: "",
-  appId: "",
+  apiKey: "AIzaSyCzP_60t1fSztGgk654IwVVEibr3mY_ink",
+  authDomain: "my-invitation-guestbook.firebaseapp.com",
+  projectId: "my-invitation-guestbook",
+  storageBucket: "my-invitation-guestbook.firebasestorage.app",
+  messagingSenderId: "703555846491",
+  appId: "1:703555846491:web:a885740ef77349a7469a7e",
+  measurementId: "G-6ZJ5HJ96SZ"
 };
 
 const galleryButtons = document.querySelectorAll("[data-photo]");
