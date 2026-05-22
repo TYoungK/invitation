@@ -1,8 +1,8 @@
 const GISCUS_CONFIG = {
-  repo: "",
-  repoId: "",
-  category: "",
-  categoryId: "",
+  repo: "TYoungK/invitation",
+  repoId: "R_kgDOSkiLdA",
+  category: "Announcements",
+  categoryId: "DIC_kwDOSkiLdM4C9lTs",
 };
 
 const galleryButtons = document.querySelectorAll("[data-photo]");
