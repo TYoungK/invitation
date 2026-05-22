@@ -11,16 +11,54 @@ const FIREBASE_CONFIG = {
 const galleryButtons = document.querySelectorAll("[data-photo]");
 const lightbox = document.querySelector(".lightbox");
 const lightboxImage = lightbox.querySelector("img");
-const closeLightbox = lightbox.querySelector("button");
+const closeLightbox = lightbox.querySelector(".lightbox__close");
+const prevLightbox = lightbox.querySelector(".lightbox__prev");
+const nextLightbox = lightbox.querySelector(".lightbox__next");
+const lightboxCounter = lightbox.querySelector(".lightbox__counter");
+const galleryPhotos = [...galleryButtons].map((button) => ({
+  src: button.dataset.photo,
+  alt: button.querySelector("img").alt,
+}));
+let currentPhotoIndex = 0;
+let touchStartX = 0;
 
-galleryButtons.forEach((button) => {
-  button.addEventListener("click", () => {
-    const src = button.dataset.photo;
-    lightboxImage.src = src;
-    lightboxImage.alt = button.querySelector("img").alt;
-    lightbox.hidden = false;
+document.querySelectorAll('a[href^="#"]').forEach((link) => {
+  link.addEventListener("click", (event) => {
+    const targetId = link.getAttribute("href");
+    const target = targetId === "#top" ? document.body : document.querySelector(targetId);
+
+    if (!target) return;
+
+    event.preventDefault();
+
+    if (targetId === "#top") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } else {
+      target.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    history.replaceState(null, "", window.location.pathname + window.location.search);
   });
 });
+
+galleryButtons.forEach((button, index) => {
+  button.addEventListener("click", () => {
+    showPhoto(index);
+  });
+});
+
+const showPhoto = (index) => {
+  currentPhotoIndex = (index + galleryPhotos.length) % galleryPhotos.length;
+  const photo = galleryPhotos[currentPhotoIndex];
+
+  lightboxImage.src = photo.src;
+  lightboxImage.alt = photo.alt;
+  lightboxCounter.textContent = `${currentPhotoIndex + 1} / ${galleryPhotos.length}`;
+  lightbox.hidden = false;
+};
+
+const showNextPhoto = () => showPhoto(currentPhotoIndex + 1);
+const showPrevPhoto = () => showPhoto(currentPhotoIndex - 1);
 
 const hideLightbox = () => {
   lightbox.hidden = true;
@@ -28,12 +66,28 @@ const hideLightbox = () => {
 };
 
 closeLightbox.addEventListener("click", hideLightbox);
+nextLightbox.addEventListener("click", showNextPhoto);
+prevLightbox.addEventListener("click", showPrevPhoto);
 lightbox.addEventListener("click", (event) => {
   if (event.target === lightbox) hideLightbox();
 });
 
+lightbox.addEventListener("touchstart", (event) => {
+  touchStartX = event.changedTouches[0].clientX;
+}, { passive: true });
+
+lightbox.addEventListener("touchend", (event) => {
+  const distance = event.changedTouches[0].clientX - touchStartX;
+
+  if (Math.abs(distance) < 45) return;
+  if (distance < 0) showNextPhoto();
+  else showPrevPhoto();
+}, { passive: true });
+
 document.addEventListener("keydown", (event) => {
   if (event.key === "Escape" && !lightbox.hidden) hideLightbox();
+  if (event.key === "ArrowRight" && !lightbox.hidden) showNextPhoto();
+  if (event.key === "ArrowLeft" && !lightbox.hidden) showPrevPhoto();
 });
 
 const commentsRoot = document.querySelector("#comments");

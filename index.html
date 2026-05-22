@@ -111,8 +111,11 @@
     </main>
 
     <div class="lightbox" hidden>
-      <button type="button" aria-label="사진 닫기">×</button>
+      <button class="lightbox__close" type="button" aria-label="사진 닫기">×</button>
+      <button class="lightbox__nav lightbox__prev" type="button" aria-label="이전 사진">‹</button>
       <img alt="" />
+      <button class="lightbox__nav lightbox__next" type="button" aria-label="다음 사진">›</button>
+      <p class="lightbox__counter" aria-live="polite"></p>
     </div>
 
     <footer>
